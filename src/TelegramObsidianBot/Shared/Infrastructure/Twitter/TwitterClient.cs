@@ -1,10 +1,8 @@
 using System.Net;
 using System.Text.RegularExpressions;
-using LinqToTwitter;
 using LinqToTwitter.OAuth;
 using Microsoft.Extensions.Options;
 using TelegramObsidianBot.Shared.Common;
-using TelegramObsidianBot.Shared.Infrastructure.Twitter;
 
 namespace TelegramObsidianBot.Shared.Infrastructure.Twitter;
 

@@ -39,9 +39,9 @@ public class ProcessTelegramMessageHandlerTests
     _busMock.Verify(x => x.Send(
       It.Is<YouTubeLinkDetected>(cmd => 
         cmd.Url == "https://www.youtube.com/watch?v=dQw4w9WgXcQ" &&
-        cmd.ChatId == 12345 &&
-        cmd.MessageId == "msg_123" &&
-        cmd.CorrelationId == "corr_456"),
+        cmd.Meta.ChatId == 12345 &&
+        cmd.Meta.MessageId == "msg_123" &&
+        cmd.Meta.CorrelationId == "corr_456"),
       It.IsAny<Dictionary<string, string>>()),
       Times.Once);
   }

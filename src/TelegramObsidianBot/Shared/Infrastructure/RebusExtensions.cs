@@ -1,5 +1,4 @@
 using Rebus.Config;
-using Rebus.ServiceProvider;
 using Rebus.Transport.InMem;
 
 namespace TelegramObsidianBot.Shared.Infrastructure;

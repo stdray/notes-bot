@@ -19,7 +19,7 @@ public class ObsidianNoteReadyHandler(
   {
     // Логирование начала обработки
     logger.LogInformation("Started processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-      nameof(ObsidianNoteReady), message.ChatId, message.CorrelationId);
+      nameof(ObsidianNoteReady), message.Meta.ChatId, message.Meta.CorrelationId);
 
     try
     {
@@ -41,24 +41,22 @@ public class ObsidianNoteReadyHandler(
       await File.WriteAllTextAsync(filePath, noteContent);
 
       logger.LogInformation("Created Obsidian note at {FilePath} | {CorrelationId}",
-        filePath, message.CorrelationId);
+        filePath, message.Meta.CorrelationId);
 
       // Отправляем уведомление о создании заметки
       await bus.Send(new ObsidianNoteCreated(
         filePath,
-        message.ChatId,
-        message.MessageId,
-        message.CorrelationId));
+        message.Meta));
 
       // Логирование успешного завершения
       logger.LogInformation("Completed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(ObsidianNoteReady), message.ChatId, message.CorrelationId);
+        nameof(ObsidianNoteReady), message.Meta.ChatId, message.Meta.CorrelationId);
     }
     catch (Exception ex)
     {
       // Логирование ошибки
       logger.LogError(ex, "Failed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(ObsidianNoteReady), message.ChatId, message.CorrelationId);
+        nameof(ObsidianNoteReady), message.Meta.ChatId, message.Meta.CorrelationId);
       throw;
     }
   }
@@ -73,8 +71,8 @@ public class ObsidianNoteReadyHandler(
       tags: [{string.Join(", ", message.Tags)}]
       source: {message.SourceUrl}
       created: {timestamp}
-      chat_id: {message.ChatId}
-      message_id: {message.MessageId}
+      chat_id: {message.Meta.ChatId}
+      message_id: {message.Meta.MessageId}
       ---
 
       # {message.Title}

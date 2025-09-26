@@ -16,7 +16,7 @@ public class YouTubeLinkDetectedHandler(
   {
     // Логирование начала обработки
     logger.LogInformation("Started processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-      nameof(YouTubeLinkDetected), message.ChatId, message.CorrelationId);
+      nameof(YouTubeLinkDetected), message.Meta.ChatId, message.Meta.CorrelationId);
 
     try
     {
@@ -31,26 +31,24 @@ public class YouTubeLinkDetectedHandler(
       var description = "Video description will be extracted here";
 
       logger.LogInformation("Extracted YouTube content for video {VideoId} | {CorrelationId}",
-        videoId, message.CorrelationId);
+        videoId, message.Meta.CorrelationId);
 
       // Отправляем извлеченный контент для дальнейшей обработки
       await bus.Send(new YouTubeContentExtracted(
         title,
         description,
         message.Url,
-        message.ChatId,
-        message.MessageId,
-        message.CorrelationId));
+        message.Meta));
 
       // Логирование успешного завершения
       logger.LogInformation("Completed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(YouTubeLinkDetected), message.ChatId, message.CorrelationId);
+        nameof(YouTubeLinkDetected), message.Meta.ChatId, message.Meta.CorrelationId);
     }
     catch (Exception ex)
     {
       // Логирование ошибки
       logger.LogError(ex, "Failed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(YouTubeLinkDetected), message.ChatId, message.CorrelationId);
+        nameof(YouTubeLinkDetected), message.Meta.ChatId, message.Meta.CorrelationId);
       throw;
     }
   }

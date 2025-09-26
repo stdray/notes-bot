@@ -1,104 +1,83 @@
 namespace TelegramObsidianBot.Shared.Contracts;
 
+
+// Общие метаданные для сообщений
+public record MessageMeta(
+    long ChatId,
+    string MessageId,
+    string CorrelationId);
+
 // Базовые сообщения для входящих данных
 public record TelegramMessageReceived(
-  string Text,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Text,
+    MessageMeta Meta);
 
 // Обнаружение ссылок
 public record TwitterLinkDetected(
-  string Url,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Url,
+    MessageMeta Meta);
 
 public record YouTubeLinkDetected(
-  string Url,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Url,
+    MessageMeta Meta);
 
 public record ArticleLinkDetected(
-  string Url,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Url,
+    MessageMeta Meta);
 
 public record GitHubLinkDetected(
-  string Url,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Url,
+    MessageMeta Meta);
 
 // Извлечение контента
 public record TwitterContentExtracted(
-  string Content,
-  string Url,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Content,
+    string Url,
+    MessageMeta Meta);
 
 public record YouTubeContentExtracted(
-  string Title,
-  string Description,
-  string Url,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Title,
+    string Description,
+    string Url,
+    MessageMeta Meta);
 
 public record ArticleContentExtracted(
-  string Title,
-  string Content,
-  string Url,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Title,
+    string Content,
+    string Url,
+    MessageMeta Meta);
 
 public record GitHubContentExtracted(
-  string RepoName,
-  string Description,
-  string ReadmeContent,
-  string Url,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string RepoName,
+    string Description,
+    string ReadmeContent,
+    string Url,
+    MessageMeta Meta);
 
 // AI обработка
 public record ContentReadyForSummarization(
-  string Content,
-  string SourceUrl,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Content,
+    string SourceUrl,
+    MessageMeta Meta);
 
 public record ContentSummarized(
-  string Summary,
-  string OriginalContent,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Summary,
+    string OriginalContent,
+    MessageMeta Meta);
 
 public record TagsGenerated(
-  string[] Tags,
-  string Content,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string[] Tags,
+    string Content,
+    MessageMeta Meta);
 
 // Создание заметок
 public record ObsidianNoteReady(
-  string Title,
-  string Content,
-  string[] Tags,
-  string SourceUrl,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string Title,
+    string Content,
+    string[] Tags,
+    string SourceUrl,
+    MessageMeta Meta);
 
 public record ObsidianNoteCreated(
-  string FilePath,
-  long ChatId,
-  string MessageId,
-  string CorrelationId);
+    string FilePath,
+    MessageMeta Meta);

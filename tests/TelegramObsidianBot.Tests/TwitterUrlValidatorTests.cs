@@ -19,7 +19,7 @@ public class TwitterUrlValidatorTests
   public void Validate_TwitterUrl_ShouldReturnExpectedResult(string url, bool isValid)
   {
     // Arrange
-    var message = new TwitterLinkDetected(url, 12345, "msg_123", "corr_456");
+  var message = new TwitterLinkDetected(url, new MessageMeta(12345, "msg_123", "corr_456"));
 
     // Act
     var result = _validator.Validate(message);
@@ -32,7 +32,7 @@ public class TwitterUrlValidatorTests
   public void Validate_InvalidChatId_ShouldReturnError()
   {
     // Arrange
-    var message = new TwitterLinkDetected("https://twitter.com/user/status/123", 0, "msg_123", "corr_456");
+  var message = new TwitterLinkDetected("https://twitter.com/user/status/123", new MessageMeta(0, "msg_123", "corr_456"));
 
     // Act
     var result = _validator.Validate(message);
@@ -46,7 +46,7 @@ public class TwitterUrlValidatorTests
   public void Validate_EmptyMessageId_ShouldReturnError()
   {
     // Arrange
-    var message = new TwitterLinkDetected("https://twitter.com/user/status/123", 12345, "", "corr_456");
+  var message = new TwitterLinkDetected("https://twitter.com/user/status/123", new MessageMeta(12345, "", "corr_456"));
 
     // Act
     var result = _validator.Validate(message);
@@ -60,7 +60,7 @@ public class TwitterUrlValidatorTests
   public void Validate_EmptyCorrelationId_ShouldReturnError()
   {
     // Arrange
-    var message = new TwitterLinkDetected("https://twitter.com/user/status/123", 12345, "msg_123", "");
+  var message = new TwitterLinkDetected("https://twitter.com/user/status/123", new MessageMeta(12345, "msg_123", ""));
 
     // Act
     var result = _validator.Validate(message);
@@ -76,9 +76,7 @@ public class TwitterUrlValidatorTests
     // Arrange
     var message = new TwitterLinkDetected(
       "https://twitter.com/user/status/123456789", 
-      12345, 
-      "msg_123", 
-      "corr_456");
+      new MessageMeta(12345, "msg_123", "corr_456"));
 
     // Act
     var result = _validator.Validate(message);

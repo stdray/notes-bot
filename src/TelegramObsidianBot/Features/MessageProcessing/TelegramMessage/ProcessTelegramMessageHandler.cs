@@ -87,7 +87,7 @@ public class ProcessTelegramMessageHandler(
     if (YouTubeRegex.IsMatch(url))
     {
       await bus.Send(new YouTubeLinkDetected(
-        url, message.ChatId, message.MessageId, message.CorrelationId));
+        url, new MessageMeta(message.ChatId, message.MessageId, message.CorrelationId)));
       return;
     }
 
@@ -95,7 +95,7 @@ public class ProcessTelegramMessageHandler(
     if (TwitterRegex.IsMatch(url))
     {
       await bus.Send(new TwitterLinkDetected(
-        url, message.ChatId, message.MessageId, message.CorrelationId));
+        url, new MessageMeta(message.ChatId, message.MessageId, message.CorrelationId)));
       return;
     }
 
@@ -103,12 +103,12 @@ public class ProcessTelegramMessageHandler(
     if (GitHubRegex.IsMatch(url))
     {
       await bus.Send(new GitHubLinkDetected(
-        url, message.ChatId, message.MessageId, message.CorrelationId));
+        url, new MessageMeta(message.ChatId, message.MessageId, message.CorrelationId)));
       return;
     }
 
     // Обычные статьи/веб-страницы
     await bus.Send(new ArticleLinkDetected(
-      url, message.ChatId, message.MessageId, message.CorrelationId));
+      url, new MessageMeta(message.ChatId, message.MessageId, message.CorrelationId)));
   }
 }

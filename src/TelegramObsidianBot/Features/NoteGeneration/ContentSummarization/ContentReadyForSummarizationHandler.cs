@@ -18,38 +18,36 @@ public class ContentReadyForSummarizationHandler(
   {
     // Логирование начала обработки
     logger.LogInformation("Started processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-      nameof(ContentReadyForSummarization), message.ChatId, message.CorrelationId);
+      nameof(ContentReadyForSummarization), message.Meta.ChatId, message.Meta.CorrelationId);
 
     try
     {
       // Используем AI для создания суммаризации
       logger.LogInformation("Requesting AI summarization for content from {SourceUrl} | {CorrelationId}",
-        message.SourceUrl, message.CorrelationId);
+        message.SourceUrl, message.Meta.CorrelationId);
 
       var summary = await aiService.SummarizeContentAsync(
         message.Content, 
         message.SourceUrl);
 
       logger.LogInformation("Generated AI summary ({Length} chars) for content from {SourceUrl} | {CorrelationId}",
-        summary.Length, message.SourceUrl, message.CorrelationId);
+        summary.Length, message.SourceUrl, message.Meta.CorrelationId);
 
       // Отправляем суммаризированный контент
       await bus.Send(new ContentSummarized(
         summary,
         message.Content,
-        message.ChatId,
-        message.MessageId,
-        message.CorrelationId));
+        message.Meta));
 
       // Логирование успешного завершения
       logger.LogInformation("Completed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(ContentReadyForSummarization), message.ChatId, message.CorrelationId);
+        nameof(ContentReadyForSummarization), message.Meta.ChatId, message.Meta.CorrelationId);
     }
     catch (Exception ex)
     {
       // Логирование ошибки
       logger.LogError(ex, "Failed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(ContentReadyForSummarization), message.ChatId, message.CorrelationId);
+        nameof(ContentReadyForSummarization), message.Meta.ChatId, message.Meta.CorrelationId);
       throw;
     }
   }

@@ -16,15 +16,15 @@ public class TwitterUrlValidator : AbstractValidator<TwitterLinkDetected>
       .Must(BeValidTwitterUrl)
       .WithMessage("URL must be a valid Twitter/X.com link");
 
-    RuleFor(x => x.ChatId)
+    RuleFor(x => x.Meta.ChatId)
       .GreaterThan(0)
       .WithMessage("ChatId must be positive");
 
-    RuleFor(x => x.MessageId)
+    RuleFor(x => x.Meta.MessageId)
       .NotEmpty()
       .WithMessage("MessageId cannot be empty");
 
-    RuleFor(x => x.CorrelationId)
+    RuleFor(x => x.Meta.CorrelationId)
       .NotEmpty()
       .WithMessage("CorrelationId cannot be empty");
   }

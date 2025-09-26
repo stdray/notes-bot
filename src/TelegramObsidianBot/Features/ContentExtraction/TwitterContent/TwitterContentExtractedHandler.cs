@@ -16,30 +16,28 @@ public class TwitterContentExtractedHandler(
   {
     // Логирование начала обработки
     logger.LogInformation("Started processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-      nameof(TwitterContentExtracted), message.ChatId, message.CorrelationId);
+      nameof(TwitterContentExtracted), message.Meta.ChatId, message.Meta.CorrelationId);
 
     try
     {
       logger.LogInformation("Prepared Twitter content for summarization from {Url} | {CorrelationId}",
-        message.Url, message.CorrelationId);
+        message.Url, message.Meta.CorrelationId);
 
       // Отправляем контент для суммаризации
       await bus.Send(new ContentReadyForSummarization(
         message.Content,
         message.Url,
-        message.ChatId,
-        message.MessageId,
-        message.CorrelationId));
+        message.Meta));
 
       // Логирование успешного завершения
       logger.LogInformation("Completed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(TwitterContentExtracted), message.ChatId, message.CorrelationId);
+        nameof(TwitterContentExtracted), message.Meta.ChatId, message.Meta.CorrelationId);
     }
     catch (Exception ex)
     {
       // Логирование ошибки
       logger.LogError(ex, "Failed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(TwitterContentExtracted), message.ChatId, message.CorrelationId);
+        nameof(TwitterContentExtracted), message.Meta.ChatId, message.Meta.CorrelationId);
       throw;
     }
   }

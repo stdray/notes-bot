@@ -16,7 +16,7 @@ public class TagsGeneratedHandler(
   {
     // Логирование начала обработки
     logger.LogInformation("Started processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-      nameof(TagsGenerated), message.ChatId, message.CorrelationId);
+      nameof(TagsGenerated), message.Meta.ChatId, message.Meta.CorrelationId);
 
     try
     {
@@ -24,7 +24,7 @@ public class TagsGeneratedHandler(
       var title = GenerateNoteTitle(message.Content);
 
       logger.LogInformation("Prepared Obsidian note '{Title}' with {TagCount} tags | {CorrelationId}",
-        title, message.Tags.Length, message.CorrelationId);
+        title, message.Tags.Length, message.Meta.CorrelationId);
 
       // Отправляем готовую заметку для создания
       await bus.Send(new ObsidianNoteReady(
@@ -32,19 +32,17 @@ public class TagsGeneratedHandler(
         message.Content,
         message.Tags,
         ExtractSourceUrl(message.Content),
-        message.ChatId,
-        message.MessageId,
-        message.CorrelationId));
+        message.Meta));
 
       // Логирование успешного завершения
       logger.LogInformation("Completed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(TagsGenerated), message.ChatId, message.CorrelationId);
+        nameof(TagsGenerated), message.Meta.ChatId, message.Meta.CorrelationId);
     }
     catch (Exception ex)
     {
       // Логирование ошибки
       logger.LogError(ex, "Failed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(TagsGenerated), message.ChatId, message.CorrelationId);
+        nameof(TagsGenerated), message.Meta.ChatId, message.Meta.CorrelationId);
       throw;
     }
   }

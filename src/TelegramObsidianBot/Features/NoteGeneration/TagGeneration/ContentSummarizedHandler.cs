@@ -18,13 +18,13 @@ public class ContentSummarizedHandler(
   {
     // Логирование начала обработки
     logger.LogInformation("Started processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-      nameof(ContentSummarized), message.ChatId, message.CorrelationId);
+      nameof(ContentSummarized), message.Meta.ChatId, message.Meta.CorrelationId);
 
     try
     {
       // Используем AI для генерации тегов
       logger.LogInformation("Requesting AI tag generation for summarized content | {CorrelationId}",
-        message.CorrelationId);
+        message.Meta.CorrelationId);
 
       var aiTags = await aiService.GenerateTagsAsync(message.Summary);
       
@@ -32,38 +32,34 @@ public class ContentSummarizedHandler(
       var allTags = CombineWithBasicTags(aiTags, message.Summary);
 
       logger.LogInformation("Generated {TagCount} tags (AI: {AITagCount}, Basic: {BasicTagCount}) | {CorrelationId}",
-        allTags.Length, aiTags.Length, allTags.Length - aiTags.Length, message.CorrelationId);
+        allTags.Length, aiTags.Length, allTags.Length - aiTags.Length, message.Meta.CorrelationId);
 
       // Отправляем сгенерированные теги
       await bus.Send(new TagsGenerated(
         allTags,
         message.Summary,
-        message.ChatId,
-        message.MessageId,
-        message.CorrelationId));
+        message.Meta));
 
       // Логирование успешного завершения
       logger.LogInformation("Completed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(ContentSummarized), message.ChatId, message.CorrelationId);
+        nameof(ContentSummarized), message.Meta.ChatId, message.Meta.CorrelationId);
     }
     catch (Exception ex)
     {
       // При ошибке AI используем fallback на базовые теги
       logger.LogWarning(ex, "AI tag generation failed, using basic tags fallback | {CorrelationId}",
-        message.CorrelationId);
+        message.Meta.CorrelationId);
 
       var basicTags = GenerateBasicTags(message.Summary);
       
       await bus.Send(new TagsGenerated(
         basicTags,
         message.Summary,
-        message.ChatId,
-        message.MessageId,
-        message.CorrelationId));
+        message.Meta));
 
       // Логирование завершения с fallback
       logger.LogInformation("Completed processing {MessageType} with basic tags fallback for ChatId {ChatId} | {CorrelationId}",
-        nameof(ContentSummarized), message.ChatId, message.CorrelationId);
+        nameof(ContentSummarized), message.Meta.ChatId, message.Meta.CorrelationId);
     }
   }
 

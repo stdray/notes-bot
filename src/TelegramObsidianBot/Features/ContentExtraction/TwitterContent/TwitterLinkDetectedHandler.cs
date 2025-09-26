@@ -18,20 +18,20 @@ public class TwitterLinkDetectedHandler(
   {
     // Логирование начала обработки
     logger.LogInformation("Started processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-      nameof(TwitterLinkDetected), message.ChatId, message.CorrelationId);
+      nameof(TwitterLinkDetected), message.Meta.ChatId, message.Meta.CorrelationId);
 
     try
     {
       // Извлекаем информацию о твите
       logger.LogInformation("Extracting Twitter content from {Url} | {CorrelationId}",
-        message.Url, message.CorrelationId);
+        message.Url, message.Meta.CorrelationId);
 
       var tweetInfo = await twitterClient.GetTweetAsync(message.Url);
 
       if (tweetInfo == null)
       {
         logger.LogWarning("Failed to extract Twitter content from {Url} | {CorrelationId}",
-          message.Url, message.CorrelationId);
+          message.Url, message.Meta.CorrelationId);
         return;
       }
 
@@ -39,28 +39,26 @@ public class TwitterLinkDetectedHandler(
       var content = FormatTweetContent(tweetInfo);
 
       logger.LogInformation("Extracted Twitter content from tweet {TweetId} by @{Username} | {CorrelationId}",
-        tweetInfo.Id, tweetInfo.AuthorUsername, message.CorrelationId);
+        tweetInfo.Id, tweetInfo.AuthorUsername, message.Meta.CorrelationId);
 
       // Отправляем извлеченный контент
       await bus.Send(new TwitterContentExtracted(
         content,
         message.Url,
-        message.ChatId,
-        message.MessageId,
-        message.CorrelationId));
+        message.Meta));
 
       // Если в твите есть другие ссылки, обрабатываем их рекурсивно
-      await ProcessEmbeddedUrls(tweetInfo.ExtractedUrls, message);
+  await ProcessEmbeddedUrls(tweetInfo.ExtractedUrls, message);
 
       // Логирование успешного завершения
       logger.LogInformation("Completed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(TwitterLinkDetected), message.ChatId, message.CorrelationId);
+        nameof(TwitterLinkDetected), message.Meta.ChatId, message.Meta.CorrelationId);
     }
     catch (Exception ex)
     {
       // Логирование ошибки
       logger.LogError(ex, "Failed processing {MessageType} for ChatId {ChatId} | {CorrelationId}",
-        nameof(TwitterLinkDetected), message.ChatId, message.CorrelationId);
+        nameof(TwitterLinkDetected), message.Meta.ChatId, message.Meta.CorrelationId);
       throw;
     }
   }
@@ -89,23 +87,23 @@ public class TwitterLinkDetectedHandler(
     foreach (var url in urls)
     {
       logger.LogInformation("Processing embedded URL from tweet: {Url} | {CorrelationId}",
-        url, originalMessage.CorrelationId);
+        url, originalMessage.Meta.CorrelationId);
 
       // Определяем тип ссылки и отправляем соответствующее сообщение
       if (IsYouTubeUrl(url))
       {
         await bus.Send(new YouTubeLinkDetected(
-          url, originalMessage.ChatId, originalMessage.MessageId, originalMessage.CorrelationId));
+          url, originalMessage.Meta));
       }
       else if (IsGitHubUrl(url))
       {
         await bus.Send(new GitHubLinkDetected(
-          url, originalMessage.ChatId, originalMessage.MessageId, originalMessage.CorrelationId));
+          url, originalMessage.Meta));
       }
       else
       {
         await bus.Send(new ArticleLinkDetected(
-          url, originalMessage.ChatId, originalMessage.MessageId, originalMessage.CorrelationId));
+          url, originalMessage.Meta));
       }
     }
   }
